@@ -1,0 +1,16 @@
+import os from "os";
+import cluster from "cluster";
+import { app } from "./index";
+
+const numCPUs = os.cpus().length;
+
+if (cluster.isPrimary) {
+  console.log(`Master ${process.pid} is running`);
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+} else {
+  app.listen(3000, () => {
+    console.log(`Worker ${process.pid} is running`);
+  });
+}
